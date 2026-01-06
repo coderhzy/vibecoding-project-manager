@@ -2,6 +2,11 @@
 
 > 此文件是 Claude Code 的主入口，每次会话自动加载。
 
+## 项目原有配置（如有）
+
+<!-- 如果项目根目录有 CLAUDE.md，自动引入 -->
+@../CLAUDE.md
+
 ## 项目概述
 
 @memory-bank/projectBrief.md
@@ -18,19 +23,6 @@
 
 ### Prompt 规范
 @../engineering/architecture/prompt-engineering/00-quick-start.md
-
-## 常用命令
-
-```bash
-# 构建
-npm run build
-
-# 测试
-npm run test
-
-# 开发
-npm run dev
-```
 
 ---
 

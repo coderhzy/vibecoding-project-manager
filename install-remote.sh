@@ -102,6 +102,36 @@ install_project_manager() {
     log_info "开始安装到: ${target_dir}"
     echo ""
 
+    # 检测已有配置
+    echo -e "${CYAN}━━━ 检测已有配置 ━━━${NC}"
+    local has_existing=false
+
+    if [ -f "${target_dir}/CLAUDE.md" ]; then
+        echo -e "  ${GREEN}✓${NC} 检测到 CLAUDE.md (将保留并自动引用)"
+        has_existing=true
+    fi
+
+    if [ -f "${target_dir}/.cursorrules" ]; then
+        echo -e "  ${GREEN}✓${NC} 检测到 .cursorrules (将在初始化时读取)"
+        has_existing=true
+    fi
+
+    if [ -d "${target_dir}/.cursor/rules" ]; then
+        echo -e "  ${GREEN}✓${NC} 检测到 .cursor/rules/ (将在初始化时读取)"
+        has_existing=true
+    fi
+
+    if [ -f "${target_dir}/README.md" ]; then
+        echo -e "  ${GREEN}✓${NC} 检测到 README.md (将在初始化时提取信息)"
+        has_existing=true
+    fi
+
+    if [ "$has_existing" = false ]; then
+        echo -e "  ${YELLOW}-${NC} 未检测到已有配置"
+    fi
+
+    echo ""
+
     # 文件列表 - 核心文件
     local files=(
         # CLAUDE.md 主入口
@@ -260,22 +290,32 @@ show_usage() {
     echo ""
     echo "  1. 打开 Claude Code"
     echo ""
-    echo "  2. 直接说你要做什么，例如："
+    echo "  2. 运行初始化命令（可选，推荐）："
+    echo -e "     ${YELLOW}/project:init${NC}"
+    echo "     这会自动分析项目结构、技术栈，并读取已有配置"
+    echo ""
+    echo "  3. 直接说你要做什么，例如："
     echo -e "     ${YELLOW}\"帮我实现用户登录功能\"${NC}"
     echo ""
-    echo "  3. 在每个检查点确认即可 (输入 y)"
+    echo "  4. 在每个检查点确认即可 (输入 y)"
+    echo ""
+    echo -e "${CYAN}已有配置处理：${NC}"
+    echo ""
+    echo "  ✓ 根目录 CLAUDE.md 会被保留并自动引用"
+    echo "  ✓ .cursorrules、README.md 会在初始化时读取"
+    echo "  ✓ 项目信息会写入 .claude/memory-bank/projectBrief.md"
     echo ""
     echo -e "${CYAN}常用命令：${NC}"
     echo ""
+    echo "  /project:init       初始化项目（分析技术栈）"
     echo "  /daily:today        查看今日开发日志"
     echo "  /daily:search \"xx\"  搜索历史记录"
-    echo "  /team:status        查看团队状态"
     echo ""
     echo -e "${CYAN}文档位置：${NC}"
     echo ""
     echo "  .claude/daily/      按日期的开发日志"
     echo "  .claude/team/       团队协作文档"
-    echo "  .claude/skills/     自动化技能配置"
+    echo "  .claude/memory-bank/ 项目记忆（技术栈、上下文）"
     echo ""
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 }

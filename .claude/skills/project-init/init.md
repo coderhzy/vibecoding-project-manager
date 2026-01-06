@@ -1,5 +1,25 @@
 # 项目初始化执行指令
 
+## 步骤 0：检测已有配置（重要！）
+
+**首先检测项目是否已有配置，保留而不覆盖：**
+
+```
+检测现有配置：
+- CLAUDE.md         → 已有 Claude Code 配置，读取并融合
+- .cursorrules      → Cursor 规则，提取关键信息
+- .cursor/rules/    → Cursor 规则目录
+- .github/copilot-instructions.md → Copilot 规则
+- README.md         → 项目说明，提取构建/测试命令
+- CONTRIBUTING.md   → 贡献指南，提取开发规范
+```
+
+**如果检测到已有 CLAUDE.md：**
+1. 读取其内容
+2. 提取构建命令、测试命令、项目架构
+3. 写入 `memory-bank/projectBrief.md` 的对应字段
+4. **不覆盖原有 CLAUDE.md**
+
 ## 步骤 1：扫描项目结构
 
 执行以下检测：
