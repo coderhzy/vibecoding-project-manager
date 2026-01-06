@@ -6,6 +6,14 @@
 # 使用方式：
 # curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash
 # curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash -s -- /path/to/project
+#
+# 参数：
+#   -y, --yes     跳过确认提示（管道模式自动启用）
+#   -f, --force   强制更新框架文件（保留用户数据）
+#   -u, --update  同 --force
+#
+# 更新已安装的框架：
+# curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash -s -- -f
 
 set -e
 
@@ -98,9 +106,20 @@ download_file() {
 # ============================================================
 install_project_manager() {
     local target_dir=$1
+    local force_update=${2:-false}
 
     log_info "开始安装到: ${target_dir}"
     echo ""
+
+    # 用户数据文件（永不覆盖）
+    local user_data_files=(
+        ".claude/memory-bank/projectBrief.md"
+        ".claude/memory-bank/activeContext.md"
+        ".claude/memory-bank/progress.md"
+        ".claude/team/status.md"
+        ".claude/team/decisions.md"
+        ".claude/TODO.md"
+    )
 
     # 检测已有配置
     echo -e "${CYAN}━━━ 检测已有配置 ━━━${NC}"
@@ -203,16 +222,43 @@ install_project_manager() {
         "product/user-guide.md"
     )
 
+    # 检查是否为用户数据文件
+    is_user_data() {
+        local check_file=$1
+        for udf in "${user_data_files[@]}"; do
+            if [[ "$check_file" == "$udf" ]]; then
+                return 0
+            fi
+        done
+        return 1
+    }
+
     # 下载核心文件
     echo -e "${CYAN}━━━ 下载核心文件 ━━━${NC}"
     local success_count=0
     local fail_count=0
+    local update_count=0
 
     for file in "${files[@]}"; do
         local target_path="${target_dir}/${file}"
 
         if [ -f "$target_path" ]; then
-            echo -e "  ${YELLOW}跳过${NC} $file (已存在)"
+            if is_user_data "$file"; then
+                # 用户数据文件，永不覆盖
+                echo -e "  ${YELLOW}保留${NC} $file (用户数据)"
+            elif [ "$force_update" = true ]; then
+                # 强制更新模式，重新下载框架文件
+                printf "  更新 %-50s " "$file"
+                if download_file "$file" "$target_path"; then
+                    echo -e "${GREEN}✓${NC}"
+                    ((update_count++))
+                else
+                    echo -e "${RED}✗${NC}"
+                    ((fail_count++))
+                fi
+            else
+                echo -e "  ${YELLOW}跳过${NC} $file (已存在)"
+            fi
         else
             printf "  下载 %-50s " "$file"
             if download_file "$file" "$target_path"; then
@@ -270,7 +316,11 @@ install_project_manager() {
     mkdir -p "${target_dir}/.claude/team/standup"
 
     echo ""
-    log_success "安装完成！下载了 ${success_count} 个文件"
+    if [ $update_count -gt 0 ]; then
+        log_success "更新完成！新下载 ${success_count} 个，更新 ${update_count} 个文件"
+    else
+        log_success "安装完成！下载了 ${success_count} 个文件"
+    fi
 
     if [ $fail_count -gt 0 ]; then
         log_warn "${fail_count} 个文件下载失败（可能是可选文件）"
@@ -327,6 +377,7 @@ main() {
     print_banner
 
     local skip_confirm=false
+    local force_update=false
     local target_dir="."
 
     # 解析参数
@@ -334,6 +385,14 @@ main() {
         case $1 in
             -y|--yes)
                 skip_confirm=true
+                shift
+                ;;
+            -f|--force)
+                force_update=true
+                shift
+                ;;
+            -u|--update)
+                force_update=true
                 shift
                 ;;
             *)
@@ -388,8 +447,15 @@ main() {
 
     echo ""
 
+    # 显示模式
+    if [ "$force_update" = true ]; then
+        log_info "更新模式：将重新下载框架文件（保留用户数据）"
+    fi
+
+    echo ""
+
     # 执行安装
-    install_project_manager "$target_dir"
+    install_project_manager "$target_dir" "$force_update"
 
     # 显示使用说明
     show_usage

@@ -19,6 +19,9 @@ curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager
 
 # 安装到指定目录
 curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash -s -- /path/to/your-project
+
+# 更新已安装的框架（保留用户数据）
+curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash -s -- -f
 ```
 
 ```bash
