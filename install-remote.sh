@@ -210,6 +210,11 @@ install_project_manager() {
 
         # Daily template
         ".claude/daily/_template.md"
+
+        # Docs templates
+        ".claude/docs/requirements/_template.md"
+        ".claude/docs/technical/_template.md"
+        ".claude/docs/decisions/_template.md"
     )
 
     # 工程文档（可选）
@@ -321,6 +326,9 @@ install_project_manager() {
     mkdir -p "${target_dir}/.claude/daily/archive"
     mkdir -p "${target_dir}/.claude/team/standup"
     mkdir -p "${target_dir}/.claude/hooks"
+    mkdir -p "${target_dir}/.claude/docs/requirements"
+    mkdir -p "${target_dir}/.claude/docs/technical"
+    mkdir -p "${target_dir}/.claude/docs/decisions"
 
     # 设置 hooks 脚本可执行权限
     if [ -d "${target_dir}/.claude/hooks" ]; then

@@ -14,13 +14,27 @@
 动作：如果不存在则创建，存在则追加
 ```
 
-### 2. 记录需求
+### 2. 创建需求文档（重要功能必须）
+```
+文件：.claude/docs/requirements/{feature-name}.md
+模板：.claude/docs/requirements/_template.md
+内容：背景、目标用户、功能点、验收标准
+```
+
+### 2.1 同时在日志中记录
 ```markdown
 ## 🎯 需求记录
 
 ### {时间} - {需求标题}
 **原始描述**：{用户原话}
-**理解分析**：{你的理解}
+**需求文档**：.claude/docs/requirements/{feature-name}.md
+```
+
+### 2.2 创建技术设计文档（复杂功能必须）
+```
+文件：.claude/docs/technical/{feature-name}.md
+模板：.claude/docs/technical/_template.md
+内容：架构设计、数据模型、接口定义、影响范围
 ```
 
 ### 3. 检查点必须使用 AskUserQuestion 工具
