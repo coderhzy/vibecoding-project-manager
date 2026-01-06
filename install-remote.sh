@@ -156,6 +156,12 @@ install_project_manager() {
         # CLAUDE.md 主入口
         ".claude/CLAUDE.md"
         ".claude/TODO.md"
+        ".claude/settings.json"
+
+        # Hooks（自动化脚本）
+        ".claude/hooks/session-start.sh"
+        ".claude/hooks/check-workflow.sh"
+        ".claude/hooks/update-log.sh"
 
         # Skills
         ".claude/skills/README.md"
@@ -314,6 +320,13 @@ install_project_manager() {
     mkdir -p "${target_dir}/.claude/sessions"
     mkdir -p "${target_dir}/.claude/daily/archive"
     mkdir -p "${target_dir}/.claude/team/standup"
+    mkdir -p "${target_dir}/.claude/hooks"
+
+    # 设置 hooks 脚本可执行权限
+    if [ -d "${target_dir}/.claude/hooks" ]; then
+        chmod +x "${target_dir}/.claude/hooks/"*.sh 2>/dev/null || true
+        log_info "已设置 hooks 脚本执行权限"
+    fi
 
     echo ""
     if [ $update_count -gt 0 ]; then
