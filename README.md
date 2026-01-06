@@ -15,16 +15,16 @@
 
 ```bash
 # 方式 1：一行命令安装（推荐）
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/project-manager/main/install-remote.sh | bash
+curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash
 
 # 安装到指定目录
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/project-manager/main/install-remote.sh | bash -s -- /path/to/your-project
+curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash -s -- /path/to/your-project
 ```
 
 ```bash
 # 方式 2：克隆后本地安装
-git clone https://github.com/YOUR_USERNAME/project-manager.git
-cd project-manager
+git clone https://github.com/coderhzy/vibecoding-project-manager.git
+cd vibecoding-project-manager
 chmod +x install.sh
 ./install.sh /path/to/your-project
 ```

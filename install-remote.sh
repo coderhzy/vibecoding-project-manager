@@ -4,17 +4,17 @@
 # 一键安装脚本，支持从 GitHub 远程安装
 #
 # 使用方式：
-# curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/project-manager/main/install-remote.sh | bash
-# curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/project-manager/main/install-remote.sh | bash -s -- /path/to/project
+# curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash
+# curl -fsSL https://raw.githubusercontent.com/coderhzy/vibecoding-project-manager/main/install-remote.sh | bash -s -- /path/to/project
 
 set -e
 
 # ============================================================
-# 配置区域 - 发布到 GitHub 后修改这里
+# 配置区域
 # ============================================================
-REPO_OWNER="YOUR_USERNAME"           # GitHub 用户名
-REPO_NAME="project-manager"          # 仓库名
-BRANCH="main"                        # 分支名
+REPO_OWNER="coderhzy"                        # GitHub 用户名
+REPO_NAME="vibecoding-project-manager"       # 仓库名
+BRANCH="main"                                # 分支名
 BASE_URL="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}"
 
 # ============================================================
@@ -286,8 +286,22 @@ show_usage() {
 main() {
     print_banner
 
-    # 获取目标目录
-    local target_dir="${1:-.}"
+    local skip_confirm=false
+    local target_dir="."
+
+    # 解析参数
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -y|--yes)
+                skip_confirm=true
+                shift
+                ;;
+            *)
+                target_dir="$1"
+                shift
+                ;;
+        esac
+    done
 
     # 转换为绝对路径
     if [[ "$target_dir" != /* ]]; then
@@ -309,12 +323,22 @@ main() {
     # 确认安装
     echo -e "即将安装 Claude Code Project Manager 到此目录"
     echo ""
-    read -p "是否继续？(y/n) " -n 1 -r
-    echo ""
 
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        log_warn "已取消安装"
-        exit 0
+    # 检测是否通过管道运行（curl | bash）或使用了 -y 参数
+    if [[ "$skip_confirm" == true ]]; then
+        log_info "使用 -y 参数，跳过确认..."
+    elif [[ ! -t 0 ]]; then
+        # 非交互模式，自动继续
+        log_info "检测到非交互模式，自动继续安装..."
+    else
+        # 交互模式，询问确认
+        read -p "是否继续？(y/n) " -n 1 -r
+        echo ""
+
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            log_warn "已取消安装"
+            exit 0
+        fi
     fi
 
     echo ""
